@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DIVERSED - Relaxed Speculative Decoding via Dynamic Ensemble Verification</title>
+  <meta name="description" content="Project page for DIVERSED: Relaxed Speculative Decoding via Dynamic Ensemble Verification, accepted at AISTATS 2026." />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111832;
+      --panel-2: #161f3f;
+      --text: #ecf1ff;
+      --muted: #b6c0e0;
+      --accent: #7aa2ff;
+      --accent-2: #8ef0c9;
+      --border: rgba(255,255,255,0.10);
+      --shadow: 0 12px 40px rgba(0,0,0,0.25);
+      --max: 1140px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(122,162,255,0.18), transparent 34%),
+        radial-gradient(circle at top right, rgba(142,240,201,0.14), transparent 28%),
+        linear-gradient(180deg, #08101d 0%, #0c1330 42%, #0b1020 100%);
+      line-height: 1.65;
+    }
+    a { color: inherit; }
+    .container {
+      width: min(calc(100% - 2rem), var(--max));
+      margin: 0 auto;
+    }
+    .hero {
+      padding: 72px 0 40px;
+    }
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-size: 0.92rem;
+      backdrop-filter: blur(10px);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.15rem);
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+      max-width: 980px;
+    }
+    .subtitle {
+      margin: 18px 0 20px;
+      max-width: 900px;
+      color: var(--muted);
+      font-size: clamp(1.02rem, 1.7vw, 1.2rem);
+    }
+    .authors {
+      color: var(--text);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    .affiliations {
+      color: var(--muted);
+      font-size: 0.98rem;
+      margin-bottom: 26px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: var(--text);
+      color: #0a1022;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      transition: transform 120ms ease, opacity 120ms ease, background 120ms ease;
+    }
+    .button.secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+    .button:hover { transform: translateY(-1px); }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+    .panel img {
+      width: 100%;
+      display: block;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+    }
+    .caption {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 12px;
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .stat .value {
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+    .stat .detail {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 6px;
+    }
+    section {
+      padding: 28px 0;
+    }
+    h2 {
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      margin: 0 0 14px;
+    }
+    .section-lead {
+      max-width: 860px;
+      color: var(--muted);
+      margin-bottom: 26px;
+      font-size: 1.02rem;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .card {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+    .card p,
+    .copy,
+    .metric-card p,
+    .practical-card p,
+    .footer {
+      color: var(--muted);
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .metric-card {
+      padding: 20px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+    .metric-card .kicker {
+      color: var(--accent-2);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+    }
+    .metric-card .big {
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .figure-grid {
+      display: grid;
+      gap: 18px;
+    }
+    .figure-card {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+    .figure-card img {
+      width: 100%;
+      display: block;
+      border-radius: 16px;
+      background: white;
+    }
+    .practical {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .practical-card {
+      padding: 22px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+    .practical-card strong {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 1.02rem;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.92rem;
+      color: #d7e1ff;
+      background: rgba(0,0,0,0.26);
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow-x: auto;
+    }
+    footer {
+      padding: 34px 0 48px;
+    }
+    .footer {
+      font-size: 0.95rem;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .footer a { color: var(--text); }
+    .accent { color: var(--accent-2); }
+    @media (max-width: 980px) {
+      .hero-grid,
+      .two-col,
+      .cards,
+      .practical,
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+      .stat-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .hero { padding-top: 54px; }
+      .panel, .card, .metric-card, .figure-card, .practical-card { padding: 16px; }
+      .stat-grid { grid-template-columns: 1fr; }
+      .button { width: 100%; }
+      .actions { display: grid; grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <div class="badge-row">
+        <span class="badge">Accepted at AISTATS 2026</span>
+        <span class="badge">Speculative Decoding</span>
+        <span class="badge">Efficient LLM Inference</span>
+      </div>
+      <h1>DIVERSED: Relaxed Speculative Decoding via Dynamic Ensemble Verification</h1>
+      <p class="subtitle">
+        A project page for our AISTATS 2026 paper on relaxing speculative decoding verification with
+        a learned, context-dependent ensemble of draft and target distributions.
+      </p>
+      <div class="authors">
+        Ziyi Wang, Siva Rajesh Kasa, Ankith M S, Santhosh Kumar Kasa, Jiaru Zou, Sumit Negi, Ruqi Zhang, Nan Jiang, Qifan Song
+      </div>
+      <div class="affiliations">
+        Purdue University · Amazon Inc. · University of Illinois Urbana-Champaign · University of Texas at El Paso
+      </div>
+      <div class="actions">
+        <a class="button" href="https://openreview.net/forum?id=yCNt8ovyzl" target="_blank" rel="noopener noreferrer">OpenReview</a>
+        <a class="button secondary" href="https://openreview.net/pdf?id=yCNt8ovyzl" target="_blank" rel="noopener noreferrer">Paper PDF</a>
+        <a class="button secondary" href="https://www.amazon.science/publications/diversed-relaxed-speculative-decoding-via-dynamic-ensemble-verification" target="_blank" rel="noopener noreferrer">Amazon Science</a>
+        <a class="button secondary" href="https://github.com/comeusr/diversed" target="_blank" rel="noopener noreferrer">Code</a>
+      </div>
+
+      <div class="hero-grid">
+        <div class="panel">
+          <img src="assets/intro-crop.png" alt="Comparison of rigid verification, static ensemble, and DIVERSED." />
+          <div class="caption">
+            <strong>Teaser.</strong> Standard speculative decoding is often overly conservative: many useful draft tokens are rejected because verification must exactly match the target distribution.
+            DIVERSED replaces that rigid rule with a learned, dynamic verifier that accepts more safe tokens while preserving final quality.
+          </div>
+        </div>
+        <div class="panel">
+          <h2 style="font-size:1.5rem; margin-bottom: 10px;">TL;DR</h2>
+          <p class="copy" style="margin-top:0;">
+            Speculative decoding speeds up LLM generation by drafting multiple tokens and verifying them in parallel. In practice, the bottleneck is often not drafting - it is rigid verification. DIVERSED learns when to stay close to the target model and when it is safe to lean more on the draft model, improving acceptance and end-to-end efficiency.
+          </p>
+          <div class="stat-grid">
+            <div class="stat">
+              <div class="label">Core idea</div>
+              <div class="value">Dynamic ensemble verifier</div>
+              <div class="detail">Blend draft and target distributions with a context-dependent weight.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Theory</div>
+              <div class="value">Static ensemble traces the Pareto front</div>
+              <div class="detail">A fixed-weight mixture characterizes the acceptance-quality trade-off.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Training</div>
+              <div class="value">Sequence-level RL</div>
+              <div class="detail">The verifier is trained using task reward plus an acceptance regularizer.</div>
+            </div>
+            <div class="stat">
+              <div class="label">Outcome</div>
+              <div class="value">Higher acceptance at similar quality</div>
+              <div class="detail">Across summarization, reasoning, and code generation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container">
+      <h2>Why this matters</h2>
+      <p class="section-lead">
+        Lossless speculative decoding is elegant but unforgiving. The draft model may propose tokens that are perfectly serviceable for the task, yet those tokens are still rejected because the verifier demands exact agreement with the target distribution. That leaves speed on the table.
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3>Rigid verification</h3>
+          <p>Standard speculative decoding accepts a draft token only if the verifier can preserve the target distribution exactly. This is distributionally faithful, but often rejects plausible tokens that would have led to equally good outputs.</p>
+        </div>
+        <div class="card">
+          <h3>Static ensemble</h3>
+          <p>A simple fixed mixture of draft and target distributions already reveals a useful trade-off: more acceptance in exchange for controlled bias. The paper shows this fixed rule sits on the theoretical Pareto frontier.</p>
+        </div>
+        <div class="card">
+          <h3>DIVERSED</h3>
+          <p>Instead of using one global trade-off weight, DIVERSED learns to adapt the verifier token by token and context by context, becoming strict where correctness is fragile and permissive where extra acceptance is safe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container two-col">
+      <div>
+        <h2>Method in one paragraph</h2>
+        <p class="copy">
+          At each decoding step, DIVERSED forms a verification distribution by mixing the target model distribution <span class="accent">p</span> and the draft model distribution <span class="accent">q</span> with a learned weight <span class="accent">w_t</span>. That weight is predicted from the hidden states of both models, so the verifier can react to the local generation context. Training uses a sequence-level reward together with an acceptance-oriented regularizer, which encourages the model to admit more useful draft tokens without collapsing into always trusting the draft or always defaulting to the target.
+        </p>
+        <h2 style="margin-top: 28px;">Theory highlights</h2>
+        <p class="copy">
+          The paper provides two clean takeaways. First, a static ensemble verifier exactly traverses the efficiency-quality Pareto frontier predicted by prior theory, which means one draft-target pair can serve many latency-quality points just by changing the mixture weight. Second, the paper derives an exact step-dependent expression for expected accepted length, removing simplifying assumptions that previous analyses relied on.
+        </p>
+      </div>
+      <div class="figure-grid">
+        <div class="figure-card">
+          <img src="assets/accept_rate_vs_ensemble_weight.png" alt="Acceptance rate versus ensemble weight for static ensemble." />
+          <div class="caption">
+            <strong>Static ensemble behaves predictably.</strong> As the verifier moves closer to the target model, acceptance decreases approximately linearly.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Main empirical takeaways</h2>
+      <p class="section-lead">
+        Across GSM8K, CNNDM, XSum, and MBPP, DIVERSED consistently raises draft-token acceptance while keeping task quality close to the target model. Below are a few representative results from the paper.
+      </p>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="kicker">Llama-3.1-8B / Llama-3.2-1B</div>
+          <div class="big">CNNDM: 21.60% → 69.96% acceptance</div>
+          <p>ROUGE-2 also improves from 9.46 to 12.11, showing that relaxed verification can be both faster and better on summarization for this model pair.</p>
+        </div>
+        <div class="metric-card">
+          <div class="kicker">Llama-3.1-8B / Llama-3.2-1B</div>
+          <div class="big">GSM8K: 44.60% → 72.61% acceptance</div>
+          <p>Accuracy stays at 67%, indicating the extra accepted tokens do not hurt final answer quality on math reasoning in this setting.</p>
+        </div>
+        <div class="metric-card">
+          <div class="kicker">Llama-3.1-8B / Llama-3.2-1B</div>
+          <div class="big">MBPP: 26.30% → 85.03% acceptance</div>
+          <p>Pass@1 remains at 53%, so the verifier becomes far more permissive without sacrificing benchmark-level programming performance.</p>
+        </div>
+        <div class="metric-card">
+          <div class="kicker">Gemma-3-12B / Gemma-3-4B</div>
+          <div class="big">CNNDM: 40.39% → 66.90% acceptance</div>
+          <p>ROUGE-2 moves from 9.06 to 10.86, again suggesting that better verification can improve both efficiency and output quality.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container two-col">
+      <div class="figure-grid">
+        <div class="figure-card">
+          <img src="assets/rouge_vs_time_enhanced.png" alt="ROUGE versus average time per sample, showing DIVERSED beyond the static ensemble frontier." />
+          <div class="caption">
+            <strong>Beyond a static trade-off.</strong> On CNNDM, DIVERSED moves past the frontier traced by static ensembles, improving the time-quality balance rather than just choosing a different point on it.</div>
+        </div>
+        <div class="figure-card">
+          <img src="assets/cnndm+gsm8k+xsum+mbpp.png" alt="Normalized time versus acceptance rate across datasets and model pairs." />
+          <div class="caption">
+            <strong>Acceptance is strongly tied to latency.</strong> Across datasets and model pairs, higher acceptance reliably corresponds to lower normalized decoding time.</div>
+        </div>
+      </div>
+      <div>
+        <h2>Reading the results</h2>
+        <p class="copy">
+          The most important practical message is simple: in speculative decoding, acceptance rate is not just a nice intermediate metric. It is tightly coupled to wall-clock performance. DIVERSED works because it targets that bottleneck directly.
+        </p>
+        <p class="copy">
+          Another useful observation from the paper is that task-specific relaxation matters. When the dynamic verifier is trained on one task and tested on another, acceptance may still rise, but quality can drop. That suggests relaxed verification should be learned with the downstream task in mind rather than treated as a universal drop-in policy.
+        </p>
+        <p class="copy">
+          Finally, simply fine-tuning the draft model is not enough. The paper shows that stronger draft-task performance does not reliably translate into better acceptance. What matters most is distributional alignment between draft and target conditionals, and DIVERSED addresses that directly at verification time.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Practical takeaways</h2>
+      <div class="practical">
+        <div class="practical-card">
+          <strong>Use DIVERSED when verification is your bottleneck</strong>
+          <p>If your draft model is already reasonably good but rigid verification still rejects too many tokens, dynamic relaxation is an attractive next step.</p>
+        </div>
+        <div class="practical-card">
+          <strong>Static ensemble is a strong baseline</strong>
+          <p>The theory makes static ensemble more than a heuristic. It is a principled, training-free knob for moving along the speed-quality frontier.</p>
+        </div>
+        <div class="practical-card">
+          <strong>Train the verifier for the task you care about</strong>
+          <p>Summarization, reasoning, and code generation reward different kinds of risk. The learned verifier should reflect that rather than using one universal relaxation policy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container two-col">
+      <div>
+        <h2>Citation</h2>
+        <p class="copy">If this project is useful in your work, please cite the paper.</p>
+        <pre>@inproceedings{wang2026diversed,
+  title={DIVERSED: Relaxed Speculative Decoding via Dynamic Ensemble Verification},
+  author={Wang, Ziyi and Kasa, Siva Rajesh and M S, Ankith and Kasa, Santhosh Kumar and Zou, Jiaru and Negi, Sumit and Zhang, Ruqi and Jiang, Nan and Song, Qifan},
+  booktitle={Proceedings of The 29th International Conference on Artificial Intelligence and Statistics},
+  year={2026}
+}</pre>
+      </div>
+      <div>
+        <h2>Page notes</h2>
+        <p class="copy">
+          This page is intentionally built as a plain static site so it can be dropped directly into GitHub Pages without a build step. All figure paths are relative, so it works both for a personal site like <code>username.github.io</code> and for a project site like <code>username.github.io/diversed</code>.
+        </p>
+        <p class="copy">
+          Before publishing, you may want to update the external links for the paper PDF, code repository, or any author homepage links.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer">
+      Built for easy GitHub Pages deployment. Replace links, add a video or poster if you have them, and publish.
+    </div>
+  </footer>
+</body>
+</html>
