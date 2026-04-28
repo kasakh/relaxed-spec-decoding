@@ -322,8 +322,8 @@
         Purdue University · Amazon Inc. · University of Illinois Urbana-Champaign · University of Texas at El Paso
       </div>
       <div class="actions">
-        <a class="button" href="https://openreview.net/forum?id=yCNt8ovyzl" target="_blank" rel="noopener noreferrer">OpenReview</a>
-        <a class="button secondary" href="https://openreview.net/pdf?id=yCNt8ovyzl" target="_blank" rel="noopener noreferrer">Paper PDF</a>
+        <a class="button" href="https://arxiv.org/abs/2604.07622" target="_blank" rel="noopener noreferrer">arXiv</a>
+        <a class="button secondary" href="https://arxiv.org/pdf/2604.07622" target="_blank" rel="noopener noreferrer">Paper PDF</a>
         <a class="button secondary" href="https://www.amazon.science/publications/diversed-relaxed-speculative-decoding-via-dynamic-ensemble-verification" target="_blank" rel="noopener noreferrer">Amazon Science</a>
         <a class="button secondary" href="https://github.com/comeusr/diversed" target="_blank" rel="noopener noreferrer">Code</a>
       </div>
@@ -370,22 +370,22 @@
 
   <section>
     <div class="container">
-      <h2>Why this matters</h2>
+      <h2>The problem every frontier lab faces today</h2>
       <p class="section-lead">
-        Lossless speculative decoding is elegant but unforgiving. The draft model may propose tokens that are perfectly serviceable for the task, yet those tokens are still rejected because the verifier demands exact agreement with the target distribution. That leaves speed on the table.
+        You run a frontier model lab. You ship three models &mdash; call them Lite, Standard, and Pro &mdash; and you price them into three fixed tiers. Your customers get three choices. But their workloads don't come in three flavors. A coding agent needs Pro-level reasoning on the tricky function but Lite-level speed on the boilerplate. A summarization pipeline wants near-Pro quality on financial reports but is happy with Lite on internal meeting notes. Today, the only way to serve that spectrum is to maintain and route across multiple model sizes, each with its own deployment, each with its own cost profile. What if a single draft-target pair could serve the entire quality-latency continuum &mdash; not in three discrete steps, but continuously?
       </p>
       <div class="cards">
         <div class="card">
-          <h3>Rigid verification</h3>
-          <p>Standard speculative decoding accepts a draft token only if the verifier can preserve the target distribution exactly. This is distributionally faithful, but often rejects plausible tokens that would have led to equally good outputs.</p>
+          <h3>The status quo: rigid tiers</h3>
+          <p>Every major provider &mdash; OpenAI (GPT-4.1 / GPT-4.1 mini / GPT-4.1 nano), Anthropic (Opus / Sonnet / Haiku), Google (Ultra / Pro / Flash) &mdash; ships a small family of models at fixed price-quality points. Customers pick a tier and live with its trade-off. Switching tiers means switching endpoints, re-evaluating prompts, and accepting a step-function change in quality. There is no dial between the steps.</p>
         </div>
         <div class="card">
-          <h3>Static ensemble</h3>
-          <p>A simple fixed mixture of draft and target distributions already reveals a useful trade-off: more acceptance in exchange for controlled bias. The paper shows this fixed rule sits on the theoretical Pareto frontier.</p>
+          <h3>One pair, infinite trade-offs</h3>
+          <p>Our theory proves that a static ensemble verifier &mdash; a simple weighted blend of a draft and target model &mdash; exactly traces the Pareto frontier between acceptance rate and distributional fidelity. That means a single deployed pair (e.g., Llama-3.1-8B + Llama-3.2-1B) can serve any point on the speed-quality curve just by turning one knob: the ensemble weight. No retraining, no new endpoints, no fleet management. Continuous pricing becomes a real option.</p>
         </div>
         <div class="card">
-          <h3>DIVERSED</h3>
-          <p>Instead of using one global trade-off weight, DIVERSED learns to adapt the verifier token by token and context by context, becoming strict where correctness is fragile and permissive where extra acceptance is safe.</p>
+          <h3>DIVERSED: beyond the frontier</h3>
+          <p>A static weight is already powerful, but it treats every token the same. DIVERSED learns a context-dependent weight that is strict where correctness is fragile (the pivotal step in a math proof) and permissive where extra acceptance is safe (boilerplate tokens in a summary). The result: it pushes past the static Pareto frontier, achieving quality that a fixed blend cannot reach at the same speed. For a provider, this means offering users a finer-grained quality dial that is also smarter &mdash; automatically tightening where it matters.</p>
         </div>
       </div>
     </div>
@@ -507,12 +507,15 @@
 }</pre>
       </div>
       <div>
-        <h2>Page notes</h2>
+        <h2>Why this matters for the industry</h2>
         <p class="copy">
-          This page is intentionally built as a plain static site so it can be dropped directly into GitHub Pages without a build step. All figure paths are relative, so it works both for a personal site like <code>username.github.io</code> and for a project site like <code>username.github.io/diversed</code>.
+          LLM inference is the single largest cost center for every model provider. Speculative decoding is already deployed in production at Google (AI Overviews) and is standard in open-source serving stacks like vLLM and SGLang. Yet every deployment today faces the same constraint: verification is all-or-nothing. You either match the target distribution exactly, or you don't.
         </p>
         <p class="copy">
-          Before publishing, you may want to update the external links for the paper PDF, code repository, or any author homepage links.
+          DIVERSED removes that binary. It gives providers a principled, learned mechanism to offer <em>continuous</em> quality-latency trade-offs from a single model pair. For API providers, this opens the door to usage-based pricing that tracks actual quality delivered per token, not just which model was called. For on-device inference, it means one deployment that adapts its fidelity to the task at hand.
+        </p>
+        <p class="copy">
+          The code is open-source and works with standard HuggingFace model pairs. The ensemble head adds negligible overhead. If you serve LLMs at scale, this is a drop-in upgrade to your speculative decoding pipeline.
         </p>
       </div>
     </div>
@@ -520,7 +523,7 @@
 
   <footer>
     <div class="container footer">
-      Built for easy GitHub Pages deployment. Replace links, add a video or poster if you have them, and publish.
+      DIVERSED &middot; AISTATS 2026 &middot; Purdue University &amp; Amazon Inc. &middot; <a href="https://arxiv.org/abs/2604.07622">arXiv</a> &middot; <a href="https://github.com/comeusr/diversed">Code</a>
     </div>
   </footer>
 </body>
